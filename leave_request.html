@@ -360,7 +360,7 @@
                     <div>请假事由：cie重考，备考复习</div>
                     <div>操作人：张帆</div>
                 </div>
-                <button class="detail-btn">详情 ›</button>
+                <button class="detail-btn" onclick="goToRecordsView()">详情 ›</button>
             </div>
 
             <div class="time-stamp">16:21</div>
@@ -376,7 +376,7 @@
                     <div>请假事由：离校上辅导班</div>
                     <div>操作人：张帆</div>
                 </div>
-                <button class="detail-btn">详情 ›</button>
+                <button class="detail-btn" onclick="goToRecordsView()">详情 ›</button>
             </div>
         </div>
 
@@ -519,6 +519,19 @@
             headerTitle.textContent = '爱云校-学生请假管理';
             navLabel.textContent = '请假记录';
             currentView = 'notification';
+        }
+
+        function goToRecordsView() {
+            const notificationView = document.getElementById('notificationView');
+            const recordsView = document.getElementById('recordsView');
+            const headerTitle = document.getElementById('headerTitle');
+            const navLabel = document.getElementById('navLabel');
+            
+            notificationView.style.display = 'none';
+            recordsView.style.display = 'block';
+            headerTitle.textContent = '请假记录';
+            navLabel.textContent = '返回通知';
+            currentView = 'records';
         }
 
         // 初始化页面
