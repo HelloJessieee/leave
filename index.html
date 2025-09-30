@@ -762,11 +762,16 @@
         // 初始化页面
         window.onload = function() {
             // 每次刷新都显示自定义设置页面
+            showCustomizeView();
+        };
+        
+        function showCustomizeView() {
             document.getElementById('customizeView').style.display = 'block';
             document.getElementById('notificationView').style.display = 'none';
             document.getElementById('recordsView').style.display = 'none';
             document.getElementById('headerTitle').textContent = '自定义设置';
-        };
+            currentView = 'customize';
+        }
     </script>
 </body>
 </html>
