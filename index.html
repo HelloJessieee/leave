@@ -609,15 +609,13 @@
                 operator: document.getElementById('operator').value
             };
             
-            localStorage.setItem('customLeaveData', JSON.stringify(customData));
-            updateAllPages();
+            updateAllPages(customData);
             goToNotificationView();
             alert('数据已保存并应用！');
         }
 
         // 更新所有页面数据
-        function updateAllPages() {
-            const data = JSON.parse(localStorage.getItem('customLeaveData'));
+        function updateAllPages(data) {
             if (!data) return;
             
             updateNotificationPage(data);
@@ -763,14 +761,8 @@
 
         // 初始化页面
         window.onload = function() {
-            const savedData = localStorage.getItem('customLeaveData');
-            if (savedData) {
-                updateAllPages();
-                goToNotificationView();
-            } else {
-                // 如果没有保存的数据，显示自定义设置页面
-                document.getElementById('headerTitle').textContent = '自定义设置';
-            }
+            // 每次刷新都显示自定义设置页面
+            document.getElementById('headerTitle').textContent = '自定义设置';
         };
     </script>
 </body>
