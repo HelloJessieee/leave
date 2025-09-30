@@ -333,8 +333,61 @@
             <button class="more-btn">⋯</button>
         </div>
 
+        <!-- 自定义设置页面 -->
+        <div class="content" id="customizeView">
+            <div style="padding: 20px; background: #f5f5f5; min-height: 100vh;">
+                <h2 style="color: #333; text-align: center; margin-bottom: 30px;">自定义请假信息</h2>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">姓名</label>
+                        <input type="text" id="studentName" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;" placeholder="请输入学生姓名">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">班级</label>
+                        <input type="text" id="studentClass" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;" placeholder="请输入班级信息">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">请假时段</label>
+                        <input type="text" id="leaveTime" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;" placeholder="例如：2025-09-29第4节～2025-09-29第9节">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">请假类型</label>
+                        <select id="leaveType" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+                            <option value="事假">事假</option>
+                            <option value="病假">病假</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">是否离校</label>
+                        <select id="offCampus" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+                            <option value="不离校">不离校（教室）</option>
+                            <option value="离校">离校</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">请假事由</label>
+                        <textarea id="leaveReason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; height: 80px; resize: vertical;" placeholder="请输入请假原因"></textarea>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: #666; font-size: 14px; margin-bottom: 5px; display: block;">操作人</label>
+                        <input type="text" id="operator" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;" placeholder="请输入操作人姓名">
+                    </div>
+                    
+                    <button onclick="saveCustomData()" style="width: 100%; background: #4CAF50; color: white; border: none; padding: 15px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px;">保存并应用</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 请假通知页面 -->
-        <div class="content notification-view" id="notificationView">
+        <div class="content notification-view" id="notificationView" style="display: none;">
             <div class="notification-card">
                 <div class="notification-header">曾宝琪同学请假申请已通过，点击详情可查看！</div>
                 <div class="notification-details">
@@ -544,9 +597,180 @@
             console.log('PWA can be installed');
         }
 
+        // 保存自定义数据
+        function saveCustomData() {
+            const customData = {
+                studentName: document.getElementById('studentName').value,
+                studentClass: document.getElementById('studentClass').value,
+                leaveTime: document.getElementById('leaveTime').value,
+                leaveType: document.getElementById('leaveType').value,
+                offCampus: document.getElementById('offCampus').value,
+                leaveReason: document.getElementById('leaveReason').value,
+                operator: document.getElementById('operator').value
+            };
+            
+            localStorage.setItem('customLeaveData', JSON.stringify(customData));
+            updateAllPages();
+            goToNotificationView();
+            alert('数据已保存并应用！');
+        }
+
+        // 更新所有页面数据
+        function updateAllPages() {
+            const data = JSON.parse(localStorage.getItem('customLeaveData'));
+            if (!data) return;
+            
+            updateNotificationPage(data);
+            updateRecordsPage(data);
+        }
+
+        // 更新通知页面
+        function updateNotificationPage(data) {
+            const notificationView = document.getElementById('notificationView');
+            notificationView.innerHTML = `
+                <div class="notification-card">
+                    <div class="notification-header">${data.studentName}同学请假申请已通过，点击详情可查看！</div>
+                    <div class="notification-details">
+                        <div>姓名：${data.studentName}</div>
+                        <div>班级：${data.studentClass}</div>
+                        <div>请假时段：${data.leaveTime}</div>
+                        <div>请假类型：${data.leaveType}</div>
+                        <div>是否离校：${data.offCampus}</div>
+                        <div>请假事由：${data.leaveReason}</div>
+                        <div>操作人：${data.operator}</div>
+                    </div>
+                    <button class="detail-btn" onclick="goToRecordsView()">详情 ›</button>
+                </div>
+
+                <div class="time-stamp">16:21</div>
+
+                <div class="notification-card">
+                    <div class="notification-header">${data.studentName}同学请假申请已通过，点击详情可查看！</div>
+                    <div class="notification-details">
+                        <div>姓名：${data.studentName}</div>
+                        <div>班级：国际部高三Grade12 高23级AL班</div>
+                        <div>请假时段：2025-09-29第10节～2025-09-29第13节</div>
+                        <div>请假类型：事假</div>
+                        <div>是否离校：离校</div>
+                        <div>请假事由：离校上辅导班</div>
+                        <div>操作人：张帆</div>
+                    </div>
+                    <button class="detail-btn" onclick="goToRecordsView()">详情 ›</button>
+                </div>
+            `;
+        }
+
+        // 更新记录页面
+        function updateRecordsPage(data) {
+            const recordsView = document.getElementById('recordsView');
+            const searchSection = recordsView.querySelector('.search-section');
+            
+            recordsView.innerHTML = `
+                <div class="search-section">
+                    <input type="text" class="search-input" placeholder="学生姓名">
+                    <button class="search-btn">搜索</button>
+                    <button class="filter-btn">筛选</button>
+                </div>
+
+                <div class="record-item" onclick="goToDetailView(1)">
+                    <div class="record-status">已批准</div>
+                    <div class="record-row">
+                        <span class="record-label">学生姓名</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="record-value">${data.studentName}</span>
+                            <div class="status-tags">
+                                <span class="status-tag leave-type">${data.leaveType}</span>
+                                <span class="status-tag ${data.offCampus === '离校' ? 'location' : 'on-campus'}">${data.offCampus === '离校' ? '离校' : '在校'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">开始时间</span>
+                        <span class="record-value">${data.leaveTime.split('～')[0] || data.leaveTime}</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">结束时间</span>
+                        <span class="record-value">${data.leaveTime.split('～')[1] || data.leaveTime}</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">事由</span>
+                        <span class="record-value">${data.leaveReason}</span>
+                    </div>
+                    ${data.offCampus !== '离校' ? `<div class="record-row">
+                        <span class="record-label">去往地点</span>
+                        <span class="record-value">教室</span>
+                    </div>` : ''}
+                </div>
+
+                <div class="record-item" onclick="goToDetailView(2)">
+                    <div class="record-status">已批准</div>
+                    <div class="record-row">
+                        <span class="record-label">学生姓名</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="record-value">${data.studentName}</span>
+                            <div class="status-tags">
+                                <span class="status-tag leave-type">事假</span>
+                                <span class="status-tag location">离校</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">开始时间</span>
+                        <span class="record-value">2025-9-29 第10节</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">结束时间</span>
+                        <span class="record-value">2025-9-29 第13节</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">事由</span>
+                        <span class="record-value">离校上辅导班</span>
+                    </div>
+                </div>
+
+                <div class="record-item" onclick="goToDetailView(3)">
+                    <div class="record-status">已批准</div>
+                    <div class="record-row">
+                        <span class="record-label">学生姓名</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="record-value">${data.studentName}</span>
+                            <div class="status-tags">
+                                <span class="status-tag leave-type">事假</span>
+                                <span class="status-tag on-campus">在校</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">开始时间</span>
+                        <span class="record-value">2025-9-29 第1节</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">结束时间</span>
+                        <span class="record-value">2025-9-29 第3节</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function goToNotificationView() {
+            document.getElementById('customizeView').style.display = 'none';
+            document.getElementById('notificationView').style.display = 'block';
+            document.getElementById('recordsView').style.display = 'none';
+            document.getElementById('headerTitle').textContent = '爱云校-学生请假管理';
+            document.getElementById('navLabel').textContent = '请假记录';
+            currentView = 'notification';
+        }
+
         // 初始化页面
         window.onload = function() {
-            // 页面加载完成
+            const savedData = localStorage.getItem('customLeaveData');
+            if (savedData) {
+                updateAllPages();
+                goToNotificationView();
+            } else {
+                // 如果没有保存的数据，显示自定义设置页面
+                document.getElementById('headerTitle').textContent = '自定义设置';
+            }
         };
     </script>
 </body>
